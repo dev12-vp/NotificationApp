@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { NotificationService } from 'src/notification/notification.service';
 
@@ -19,27 +19,27 @@ When to use ModuleRef:
 @Injectable()
 export class UserService {
 
-    // constructor(@Inject(forwardRef(() => NotificationService))
-    // private readonly notificationService: NotificationService
-    // ) { }
-    private notificationService: NotificationService;
-    private userData: any = [];
+  // constructor(@Inject(forwardRef(() => NotificationService))
+  // private readonly notificationService: NotificationService
+  // ) { }
+  private notificationService: NotificationService;
+  private userData: any = [];
 
-    constructor(private readonly moduleRef: ModuleRef) { }
+  constructor(private readonly moduleRef: ModuleRef) { }
 
-    onModuleInit() {
-        this.notificationService = this.moduleRef.get(NotificationService, { strict: false });
-    }
+  onModuleInit() {
+    this.notificationService = this.moduleRef.get(NotificationService, { strict: false });
+  }
 
-    getUserById(id: number) {
-        return this.userData.find(user => user.id === id);
-    }
+  getUserById(id: number) {
+    return this.userData.find(user => user.id === id);
+  }
 
-    createUser(name: string) {
-        const newUser = { id: this.userData.length + 1, name };
-        this.userData.push(newUser);
+  createUser(name: string, email: string) {
+    const newUser = { id: this.userData.length + 1, name, email };
+    this.userData.push(newUser);
 
-        console.log(`User created: ${newUser.name}`);
-        this.notificationService.sendNotification(newUser.id, 'Welcome to our app!');
-    }
+    Logger.log(`User created: ${newUser.name}`);
+    this.notificationService.sendNotification(newUser.id, `Welcome to our app! ${name}`);
+  }
 }
